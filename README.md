@@ -38,6 +38,9 @@ uv run -m unidic download
 
 With pip (slower to resolve extras):
 
+Prefer the uv checkout workflow above if `curated-tokenizers` needs a source
+build: pip does not apply the project's uv build constraint (see Troubleshooting).
+
 ```bash
 python3.14 -m venv .venv
 source .venv/bin/activate
@@ -101,6 +104,12 @@ Tem uma nota prática e humana sobre Kokoro em
   3.14 or newer. Older README versions incorrectly instructed users to pin
   3.13.9. In the checkout, run `uv python install 3.14`, `uv python pin 3.14`,
   then `uv sync`.
+- `curated-tokenizers` build fails with `Compiler crash in OptimizeBuiltinCalls`
+  → update your checkout and run `uv sync --locked`. The project constrains
+  isolated builds to Cython 3.2.4 because 3.3.0 crashes on this dependency.
+  Installing Cython into `.venv` does not control an isolated build. This
+  constraint applies to the checkout's uv workflow, not automatically to pip
+  or `uv tool install`.
 - “No default output device” → configure your OS audio output or pass
   `sd.default.device` environment vars.
 - Model download slow/fails → verify network access to Hugging Face; rerun after
