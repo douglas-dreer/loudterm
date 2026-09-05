@@ -3,7 +3,7 @@ set dotenv-load
 
 # Variables
 project_name := "loudterm"
-python_version := "3.13.9"
+python_version := "3.14"
 root_dir := "src" / project_name
 
 # Default: show all recipes
