@@ -44,6 +44,10 @@ Issues = "https://github.com/luizomf/loudterm/issues"
 [project.scripts]
 loudterm = "loudterm.cli:main"
 
+[tool.uv]
+# Cython 3.3.0 crashes while building curated-tokenizers 0.0.9 (issue #4).
+build-constraint-dependencies = ["Cython==3.2.4"]
+
 [tool.ruff]
 line-length = 88
 target-version = "py314"

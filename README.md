@@ -18,7 +18,7 @@ stream audio, auto‑play, and auto‑save WAVs without leaving the terminal.
 
 ## Requirements
 
-- Python 3.13+.
+- Python 3.14+ (the checkout pins 3.14).
 - Audio deps: `sounddevice` (PortAudio) and `soundfile` (libsndfile). Install
   via your package manager if not provided by wheels.
 - First run downloads ~300 MB Kokoro weights from Hugging Face.
@@ -29,8 +29,8 @@ stream audio, auto‑play, and auto‑save WAVs without leaving the terminal.
 Using [uv](https://docs.astral.sh/uv/):
 
 ```bash
-uv python install 3.13.9
-uv python pin 3.13.9
+uv python install 3.14
+uv python pin 3.14
 uv sync
 # Optional for Japanese voices
 uv run -m unidic download
@@ -38,8 +38,11 @@ uv run -m unidic download
 
 With pip (slower to resolve extras):
 
+Prefer the uv checkout workflow above if `curated-tokenizers` needs a source
+build: pip does not apply the project's uv build constraint (see Troubleshooting).
+
 ```bash
-python -m venv .venv
+python3.14 -m venv .venv
 source .venv/bin/activate
 pip install --upgrade pip
 pip install -e .
@@ -70,6 +73,11 @@ ready!” message when loaded.
 - Bottom toolbar shows current toggles + voice.
 
 Generated files live in `output/` as `<timestamp>_<voice>.wav`.
+For a source checkout, this is the repository's `output/` directory, not the
+current working directory. With a tool installation, it is relative to the
+installed package: for example, `~/.local/share/uv/tools/loudterm/lib/python3.14/output/`
+on the macOS setup reported in [issue #4](https://github.com/luizomf/loudterm/issues/4).
+Back up recordings before removing or reinstalling the tool environment.
 
 ## Kokoro Notes
 
@@ -88,10 +96,20 @@ Tem uma nota prática e humana sobre Kokoro em
 - Tests (none yet besides placeholder): `uv run pytest`.
 - Convenience with just:
   - `just run` — clear terminal and start loudterm.
-  - `just setup` — install/pin Python 3.13.9 and sync deps.
+  - `just setup` — install/pin Python 3.14 and sync deps.
 
 ## Troubleshooting
 
+- Python version errors during installation → this project requires Python
+  3.14 or newer. Older README versions incorrectly instructed users to pin
+  3.13.9. In the checkout, run `uv python install 3.14`, `uv python pin 3.14`,
+  then `uv sync`.
+- `curated-tokenizers` build fails with `Compiler crash in OptimizeBuiltinCalls`
+  → update your checkout and run `uv sync --locked`. The project constrains
+  isolated builds to Cython 3.2.4 because 3.3.0 crashes on this dependency.
+  Installing Cython into `.venv` does not control an isolated build. This
+  constraint applies to the checkout's uv workflow, not automatically to pip
+  or `uv tool install`.
 - “No default output device” → configure your OS audio output or pass
   `sd.default.device` environment vars.
 - Model download slow/fails → verify network access to Hugging Face; rerun after
@@ -105,6 +123,8 @@ Tem uma nota prática e humana sobre Kokoro em
 
 The text below was copied directly from the
 [Kokoro repository](https://github.com/hexgrad/kokoro/blob/main/README.md).
+These are upstream model examples, not loudterm installation instructions;
+loudterm still requires Python 3.14+, including when using Conda.
 
 ### Windows Installation
 
